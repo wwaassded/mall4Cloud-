@@ -1,0 +1,163 @@
+version: "3.8"
+
+services:
+
+  mall4cloud-mysql:
+    image: registry.cn-hongkong.aliyuncs.com/mall4j-images/mysql:8.0.35
+    container_name: mall4cloud-mysql
+    restart: always
+    platform: linux/amd64
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 80jpnH4.r5g
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/conf.d:/etc/mysql/conf.d
+      - ./mysql/initdb:/docker-entrypoint-initdb.d
+
+  mall4cloud-redis:
+    image: registry.cn-hongkong.aliyuncs.com/mall4j-images/redis:7.0
+    container_name: mall4cloud-redis
+    restart: always
+    platform: linux/amd64
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass 80jpnH4.r5g
+
+  mall4cloud-minio:
+    image: registry.cn-hongkong.aliyuncs.com/mall4j-images/minio:RELEASE.2024-04-18T19-09-19Z
+    container_name: mall4cloud-minio
+    restart: always
+    user: "0:0"
+    platform: linux/amd64
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    volumes:
+      - /Users/whatyi/docker-data/minio:/data
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: 80jpnH4.r5g
+      MINIO_BROWSER_REDIRECT_URL: http://127.0.0.1:9001
+
+  mall4cloud-nacos:
+    image: registry.cn-hongkong.aliyuncs.com/mall4j-images/nacos-server:v2.3.2
+    container_name: mall4cloud-nacos
+    restart: always
+    platform: linux/amd64
+    depends_on:
+      - mall4cloud-mysql
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "9849:9849"
+    environment:
+      MODE: standalone
+      PREFER_HOST_MODE: hostname
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: mall4cloud-mysql
+      MYSQL_SERVICE_DB_NAME: mall4cloud_nacos
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: 80jpnH4.r5g
+      NACOS_AUTH_ENABLE: "true"
+      JVM_XMS: 256m
+      JVM_XMX: 256m
+    volumes:
+      - ./nacos/logs:/home/nacos/logs
+
+  mall4cloud-seata:
+    image: registry.cn-hongkong.aliyuncs.com/mall4j-images/seata-server:2.0.0
+    container_name: mall4cloud-seata
+    restart: always
+    platform: linux/amd64
+    ports:
+      - "8091:8091"
+      - "7091:7091"
+    environment:
+      STORE_MODE: db
+      SEATA_IP: mall4cloud-seata
+      SEATA_PORT: 8091
+    volumes:
+      - ./seata/application.yml:/seata-server/resources/application.yml
+
+  mall4cloud-elasticsearch:
+    image: registry.cn-hongkong.aliyuncs.com/mall4j-images/elasticsearch:7.17.21
+    container_name: mall4cloud-elasticsearch
+    restart: always
+    platform: linux/amd64
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      ELASTIC_PASSWORD: 80jpnH4.r5g
+      xpack.security.enabled: "true"
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./elasticsearch/data:/usr/share/elasticsearch/data
+      - ./elasticsearch/plugins:/usr/share/elasticsearch/plugins
+
+  mall4cloud-canal:
+    image: registry.cn-hongkong.aliyuncs.com/mall4j-images/canal-server:v1.1.7
+    container_name: mall4cloud-canal
+    restart: always
+    platform: linux/amd64
+    ports:
+      - "11111:11111"
+    volumes:
+      - ./canal/conf/example:/home/admin/canal-server/conf/example
+      - ./canal/conf/canal.properties:/home/admin/canal-server/conf/canal.properties
+      - ./canal/logs:/home/admin/canal-server/logs
+
+  mall4cloud-rocketmq-namesrv:
+    image: registry.cn-hongkong.aliyuncs.com/mall4j-images/rocketmq:5.2.0
+    container_name: mall4cloud-rocketmq-namesrv
+    restart: always
+    platform: linux/amd64
+    ports:
+      - "9876:9876"
+    volumes:
+      - ./rocketmq/namesrv/logs:/home/rocketmq/logs
+      - ./rocketmq/namesrv/store:/home/rocketmq/store
+    environment:
+      JAVA_OPT_EXT: "-Duser.home=/home/rocketmq -Xms512M -Xmx512M -Xmn128M"
+    command: sh mqnamesrv
+
+  mall4cloud-rocketmq-broker:
+    image: registry.cn-hongkong.aliyuncs.com/mall4j-images/rocketmq:5.2.0
+    container_name: mall4cloud-rocketmq-broker
+    restart: always
+    platform: linux/amd64
+    depends_on:
+      - mall4cloud-rocketmq-namesrv
+    ports:
+      - "10909:10909"
+      - "10911:10911"
+    volumes:
+      - ./rocketmq/broker/logs:/home/rocketmq/logs
+      - ./rocketmq/broker/store:/home/rocketmq/store
+      - ./rocketmq/broker/conf/broker.conf:/etc/rocketmq/broker.conf
+    environment:
+      JAVA_OPT_EXT: "-Duser.home=/home/rocketmq -Xms512M -Xmx512M -Xmn128M"
+    command:
+      - sh
+      - mqbroker
+      - -c
+      - /etc/rocketmq/broker.conf
+      - -n
+      - mall4cloud-rocketmq-namesrv:9876
+
+  mall4cloud-rocketmq-dashboard:
+    image: registry.cn-hongkong.aliyuncs.com/mall4j-images/rocketmq-dashboard:1.0.1
+    container_name: mall4cloud-rocketmq-dashboard
+    restart: always
+    platform: linux/amd64
+    ports:
+      - "8180:8080"
+    environment:
+      JAVA_OPTS: "-Drocketmq.namesrv.addr=mall4cloud-rocketmq-namesrv:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false"
+    depends_on:
+      - mall4cloud-rocketmq-namesrv

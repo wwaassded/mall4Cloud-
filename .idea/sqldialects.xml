@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/doc/中间件docker-compse一键安装/mysql/initdb/mall4cloud_canal.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/doc/中间件docker-compse一键安装/mysql/initdb/mall4cloud_nacos.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/doc/中间件docker-compse一键安装/mysql/initdb/mall4cloud_seata.sql" dialect="MySQL" />
+  </component>
+</project>
