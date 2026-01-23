@@ -5,33 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.spring.what</groupId>
-        <artifactId>superMallCloud</artifactId>
+        <artifactId>sMall-api</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sMall-common</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>common-core</module>
-        <module>common-database</module>
-    </modules>
+    <artifactId>api-leaf</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-    </dependencies>
 
 </project>

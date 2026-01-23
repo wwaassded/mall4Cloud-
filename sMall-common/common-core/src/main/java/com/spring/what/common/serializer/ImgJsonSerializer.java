@@ -1,0 +1,42 @@
+package com.spring.what.common.serializer;
+
+import cn.hutool.core.util.StrUtil;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.spring.what.common.util.PrincipalUtil;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+
+@Component
+@RefreshScope
+public class ImgJsonSerializer extends JsonSerializer<String> {
+
+    @Value("${biz.oss.resources-url}")
+    private String imgDomain;
+
+    @Override
+    public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        if (StrUtil.isBlank(value)) {
+            gen.writeString(StrUtil.EMPTY);
+            return;
+        } else if (StrUtil.isBlank(imgDomain)) {
+            gen.writeString(value);
+            return;
+        }
+        String[] imgs = value.split(StrUtil.COMMA);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String img : imgs) {
+            if (PrincipalUtil.isHttpProtocol(value)) {
+                stringBuilder.append(img).append(StrUtil.COMMA);
+            } else {
+                stringBuilder.append(imgDomain).append(img).append(StrUtil.COMMA);
+            }
+        }
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        gen.writeString(stringBuilder.toString());
+    }
+}

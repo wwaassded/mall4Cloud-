@@ -11,6 +11,8 @@ services:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: 80jpnH4.r5g
+    networks:
+      - work-net
     volumes:
       - ./mysql/data:/var/lib/mysql
       - ./mysql/conf.d:/etc/mysql/conf.d
@@ -21,6 +23,8 @@ services:
     container_name: mall4cloud-redis
     restart: always
     platform: linux/amd64
+    networks:
+      - work-net
     ports:
       - "6379:6379"
     command: redis-server --requirepass 80jpnH4.r5g
@@ -30,6 +34,8 @@ services:
     container_name: mall4cloud-minio
     restart: always
     user: "0:0"
+    networks:
+      - work-net
     platform: linux/amd64
     ports:
       - "9000:9000"
@@ -47,6 +53,8 @@ services:
     container_name: mall4cloud-nacos
     restart: always
     platform: linux/amd64
+    networks:
+      - work-net
     depends_on:
       - mall4cloud-mysql
     ports:
@@ -61,16 +69,19 @@ services:
       MYSQL_SERVICE_DB_NAME: mall4cloud_nacos
       MYSQL_SERVICE_USER: root
       MYSQL_SERVICE_PASSWORD: 80jpnH4.r5g
-      NACOS_AUTH_ENABLE: "true"
+      NACOS_AUTH_ENABLE: "false"
       JVM_XMS: 256m
       JVM_XMX: 256m
     volumes:
       - ./nacos/logs:/home/nacos/logs
+      - ./nacos/conf:/Users/whatyi/docker-data/nacos
 
   mall4cloud-seata:
     image: registry.cn-hongkong.aliyuncs.com/mall4j-images/seata-server:2.0.0
     container_name: mall4cloud-seata
     restart: always
+    networks:
+      - work-net
     platform: linux/amd64
     ports:
       - "8091:8091"
@@ -86,6 +97,8 @@ services:
     image: registry.cn-hongkong.aliyuncs.com/mall4j-images/elasticsearch:7.17.21
     container_name: mall4cloud-elasticsearch
     restart: always
+    networks:
+      - work-net
     platform: linux/amd64
     ports:
       - "9200:9200"
@@ -104,6 +117,8 @@ services:
     image: registry.cn-hongkong.aliyuncs.com/mall4j-images/canal-server:v1.1.7
     container_name: mall4cloud-canal
     restart: always
+    networks:
+      - work-net
     platform: linux/amd64
     ports:
       - "11111:11111"
@@ -116,6 +131,8 @@ services:
     image: registry.cn-hongkong.aliyuncs.com/mall4j-images/rocketmq:5.2.0
     container_name: mall4cloud-rocketmq-namesrv
     restart: always
+    networks:
+      - work-net
     platform: linux/amd64
     ports:
       - "9876:9876"
@@ -130,6 +147,8 @@ services:
     image: registry.cn-hongkong.aliyuncs.com/mall4j-images/rocketmq:5.2.0
     container_name: mall4cloud-rocketmq-broker
     restart: always
+    networks:
+      - work-net
     platform: linux/amd64
     depends_on:
       - mall4cloud-rocketmq-namesrv
@@ -154,10 +173,16 @@ services:
     image: registry.cn-hongkong.aliyuncs.com/mall4j-images/rocketmq-dashboard:1.0.1
     container_name: mall4cloud-rocketmq-dashboard
     restart: always
+    networks:
+      - work-net
     platform: linux/amd64
     ports:
       - "8180:8080"
     environment:
-      JAVA_OPTS: "-Drocketmq.namesrv.addr=mall4cloud-rocketmq-namesrv:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false"
+      NAMESRV_ADDR: mall4cloud-rocketmq-namesrv:9876
+      JAVA_OPTS: "-Dcom.rocketmq.sendMessageWithVIPChannel=false"
     depends_on:
       - mall4cloud-rocketmq-namesrv
+networks:
+  work-net:
+    driver: bridge
