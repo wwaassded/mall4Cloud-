@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
-@EnableFeignClients("com.spring.what.api.**.feign")
+@EnableFeignClients("com.spring.what.api.**.leaf")
 @MapperScan("com.spring.what.leaf.mapper")
 public class sMallLeafApplication {
     public static void main(String[] args) {
