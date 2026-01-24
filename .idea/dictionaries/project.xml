@@ -2,7 +2,10 @@
   <dictionary name="project">
     <words>
       <w>aliyun</w>
+      <w>allocs</w>
+      <w>idcache</w>
       <w>imgs</w>
+      <w>leafkey</w>
       <w>whatyi</w>
     </words>
   </dictionary>
