@@ -9,12 +9,15 @@ import com.spring.what.leaf.segment.model.SegmentBuffer;
 import com.spring.what.leaf.service.LeafAllocService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.internal.constraintvalidators.bv.number.sign.NegativeOrZeroValidatorForBigDecimal;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
 
 
 @Slf4j
@@ -60,6 +63,8 @@ public class SegmentIDGenImpl implements IDGen {
             TimeUnit.SECONDS,
             new SynchronousQueue<>(),
             new UpdateThreadFactory());
+    @Autowired
+    private NegativeOrZeroValidatorForBigDecimal negativeOrZeroValidatorForBigDecimal;
 
     public static class UpdateThreadFactory implements ThreadFactory {
 
@@ -82,7 +87,7 @@ public class SegmentIDGenImpl implements IDGen {
         }
         SegmentBuffer segmentBuffer = cache.get(key);
         if (segmentBuffer != null) {
-            if (segmentBuffer.isInitOk()) {
+            if (segmentBuffer.isInitOk()) { //先访问加锁后再次判断 而不是直接加锁 提高代码效率
                 synchronized (segmentBuffer) {
                     if (segmentBuffer.isInitOk()) {
                         try {
@@ -160,7 +165,84 @@ public class SegmentIDGenImpl implements IDGen {
     }
 
     public Result getIdFromSegmentBuffer(final SegmentBuffer buffer) {
-        return new Result();
+        while (true) {
+            buffer.rLock().lock();
+            try {
+                final Segment segment = buffer.getCurrentSegment();
+                if (!buffer.isNextReady() && (segment.getIdle() < 0.9 * segment.getStep())
+                        && buffer.getThreadRunning().compareAndSet(false, true)) {
+                    service.execute(() -> {
+                        Segment nextSegment = buffer.getSegments()[buffer.nextPos()];
+                        boolean updateReady = false;
+                        try {
+                            updateSegmentFromDb(buffer.getKey(), nextSegment);
+                            updateReady = true;
+                        } catch (Exception e) {
+                            log.warn("update {} next segment from db exception", buffer.getKey(), e);
+                        } finally {
+                            if (updateReady) {
+                                buffer.wLock().lock();
+                                buffer.setNextReady(true);
+                                buffer.getThreadRunning().set(false);
+                                buffer.wLock().unlock();
+                            } else {
+                                buffer.getThreadRunning().set(false);
+                            }
+                        }
+                    });
+                }
+                long value;
+                if (segment.getRandomStep() > 1) {
+                    value = segment.getValue().getAndAdd(randomAdd(segment.getRandomStep()));
+                } else {
+                    value = segment.getValue().getAndIncrement();
+                }
+                if (value < segment.getMax()) {
+                    return new Result(value, Status.OK);
+                }
+            } finally {
+                buffer.rLock().unlock();
+            }
+            waitAndSleep(buffer);
+            buffer.wLock().lock();
+            try {
+                long value;
+                Segment currentSegment = buffer.getCurrentSegment();
+                value = currentSegment.getValue().getAndIncrement();
+                if (value < currentSegment.getMax()) {
+                    return new Result(value, Status.OK);
+                }
+                if (buffer.isNextReady()) {
+                    buffer.switchPos();
+                    buffer.setNextReady(false);
+                } else {
+                    log.warn("{} both segments is not ready", buffer);
+                    return new Result(EXCEPTION_ID_TWO_SEGMENTS_ARE_NULL, Status.EXCEPTION);
+                }
+            } finally {
+                buffer.wLock().unlock();
+            }
+        }
+    }
+
+    private void waitAndSleep(SegmentBuffer buffer) {
+        int roll = 0;
+        while (buffer.getThreadRunning().get()) {
+            roll += 1;
+            if (roll > 10000) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(10);
+                    break;
+                } catch (InterruptedException e) {
+                    log.warn("Thread {} Interrupted, Exception:", Thread.currentThread().getName(), e);
+                    break;
+                }
+            }
+        }
+    }
+
+    private long randomAdd(int random) {
+        return RANDOM.nextInt(random - 1) + 1;
     }
 
     public void updateSegmentFromDb(String key, Segment segment) {
