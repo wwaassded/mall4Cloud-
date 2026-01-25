@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Data
 @Slf4j
@@ -66,6 +67,10 @@ public class ServerResponseEntity<T> implements Serializable {
         serverResponseEntity.setMsg(serverResponseEntity.getMsg());
         log.error(serverResponseEntity.toString());
         return serverResponseEntity;
+    }
+
+    public boolean isSuccess() {
+        return Objects.equals(ResponseEnum.OK.value(), this.code);
     }
 
 }
