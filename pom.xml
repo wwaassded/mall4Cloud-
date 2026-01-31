@@ -12,6 +12,8 @@
         <module>sMall-common</module>
         <module>sMall-leaf</module>
         <module>sMall-api</module>
+        <module>sMall-common/common-security</module>
+        <module>sMall-auth</module>
     </modules>
 
     <properties>
