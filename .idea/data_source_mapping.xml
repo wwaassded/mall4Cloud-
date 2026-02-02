@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
+    <file url="file://$PROJECT_DIR$/sMall-auth/src/main/resources/com/spring/what/auth/mapper/AuthAccountMapper.xml" value="7b5859c9-65db-4dd6-a8fb-dcf212375cff" />
     <file url="file://$PROJECT_DIR$/sMall-leaf/src/main/resources/com/spring/what/leaf/mapper/LeafAllocMapper.xml" value="bb71e355-6276-4bdd-9f23-337555997c3a" />
   </component>
 </project>

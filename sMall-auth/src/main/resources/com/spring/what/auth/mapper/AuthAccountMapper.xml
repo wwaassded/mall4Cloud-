@@ -4,4 +4,14 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spring.what.auth.mapper.AuthAccountMapper">
 
+    <select id="getVerifiedUserInfoByInputUserName"
+            resultType="com.spring.what.security.bo.AuthAccountInVerifyBO">
+        select user_id, sys_type, uid, password, is_admin, tenant_id, status
+        from auth_account
+        where sys_type = #{sysType}
+        and status != -1
+        <if test="inputEnum == 2">
+            and username = #{userName}
+        </if>
+    </select>
 </mapper>
