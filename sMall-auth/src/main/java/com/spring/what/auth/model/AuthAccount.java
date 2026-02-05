@@ -1,17 +1,17 @@
 package com.spring.what.auth.model;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.util.Date;
+
 import lombok.Data;
 
 /**
  * 统一账户信息
+ *
  * @TableName auth_account
  */
-@TableName(value ="auth_account")
+@TableName(value = "auth_account")
 @Data
 public class AuthAccount {
     /**
@@ -48,6 +48,7 @@ public class AuthAccount {
     /**
      * 状态 1:启用 0:禁用 -1:删除
      */
+    @TableLogic(value = "1", delval = "-1")
     private Integer status;
 
     /**

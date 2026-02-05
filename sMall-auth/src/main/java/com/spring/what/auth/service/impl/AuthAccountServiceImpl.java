@@ -3,8 +3,11 @@ package com.spring.what.auth.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.mapper.Mapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.spring.what.api.auth.bo.UserInfoInTokenBO;
+import com.spring.what.api.auth.constant.SysTypeEnum;
+import com.spring.what.api.auth.vo.AuthAccountVO;
 import com.spring.what.auth.constant.AuthAccountStatusEnum;
 import com.spring.what.auth.model.AuthAccount;
 import com.spring.what.auth.service.AuthAccountService;
@@ -15,6 +18,7 @@ import com.spring.what.common.util.PrincipalUtil;
 import com.spring.what.security.bo.AuthAccountInVerifyBO;
 import com.spring.what.security.constant.InputUsernameEnum;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -78,6 +82,55 @@ public class AuthAccountServiceImpl extends ServiceImpl<AuthAccountMapper, AuthA
         updateWrapper.eq(AuthAccount::getUserId, userId)
                 .eq(AuthAccount::getSysType, sysType)
                 .set(AuthAccount::getPassword, encode);
+    }
+
+    @Override
+    public AuthAccountInVerifyBO getVerifiedAuthAccount(Integer value, String username, Integer sysType) {
+        return authAccountMapper.getVerifiedUserInfoByInputUserName(username, value, sysType);
+    }
+
+    @Override
+    public void updateAuthAccount(AuthAccount data) {
+        authAccountMapper.updateAuthAccount(data);
+    }
+
+    @Override
+    public void deleteByUserIdAndSysType(Long userId, Integer sysType) {
+        authAccountMapper.deleteByUserIdAndSysType(userId, sysType);
+    }
+
+    @Override
+    public AuthAccount getAuthAcccountByUserIdAndSysType(Long userId, Integer sysType) {
+        return authAccountMapper.getAuthAcccountByUserIdAndSysType(userId, sysType);
+    }
+
+    @Override
+    public AuthAccountVO getAuthAcccountByUserNameAndSysType(String username, SysTypeEnum sysType) {
+        return authAccountMapper.getAuthAcccountByUserNameAndSysType(username, sysType.value());
+    }
+
+    @Override
+    public int updateByIdAndSystype(AuthAccount authAccount, Long userId, Integer sysType) {
+        return authAccountMapper.updateByIdAndSystype(authAccount, userId, sysType);
+    }
+
+    @Override
+    public AuthAccountVO getMerchantInfoByTenantId(Long tenantId) {
+        LambdaQueryWrapper<AuthAccount> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(AuthAccount::getTenantId, tenantId)
+                .eq(AuthAccount::getIsAdmin, 1)
+                .eq(AuthAccount::getSysType, SysTypeEnum.MULTISHOP.value());
+        AuthAccount authAccount = authAccountMapper.selectOne(lambdaQueryWrapper);
+        return BeanUtil.map(authAccount, AuthAccountVO.class);
+    }
+
+    @Override
+    public void updateShopPassword(Long userId, Integer sysType, String password) {
+        LambdaUpdateWrapper<AuthAccount> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.eq(AuthAccount::getUserId, userId)
+                .eq(AuthAccount::getSysType, sysType)
+                .set(AuthAccount::getPassword, password);
+        authAccountMapper.update(lambdaUpdateWrapper);
     }
 }
 

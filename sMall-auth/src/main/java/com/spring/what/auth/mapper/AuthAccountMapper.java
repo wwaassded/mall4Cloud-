@@ -1,5 +1,7 @@
 package com.spring.what.auth.mapper;
 
+import com.spring.what.api.auth.constant.SysTypeEnum;
+import com.spring.what.api.auth.vo.AuthAccountVO;
 import com.spring.what.auth.model.AuthAccount;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.spring.what.security.bo.AuthAccountInVerifyBO;
@@ -17,6 +19,16 @@ import org.apache.ibatis.annotations.Param;
 public interface AuthAccountMapper extends BaseMapper<AuthAccount> {
 
     AuthAccountInVerifyBO getVerifiedUserInfoByInputUserName(@Param("userName") String principal, @Param("inputEnum") Integer inputUsernameEnum, @Param("sysType") Integer sysType);
+
+    void updateAuthAccount(@Param("account") AuthAccount data);
+
+    void deleteByUserIdAndSysType(@Param("userid") Long userId, @Param("sysType") Integer sysType);
+
+    AuthAccount getAuthAcccountByUserIdAndSysType(@Param("userid") Long userId, @Param("sysType") Integer sysType);
+
+    AuthAccountVO getAuthAcccountByUserNameAndSysType(@Param("username") String username, @Param("systype") Integer sysType);
+
+    int updateByIdAndSystype(@Param("account") AuthAccount authAccount, @Param("userid") Long userId, @Param("systype") Integer sysType);
 }
 
 

@@ -3,6 +3,36 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spring.what.auth.mapper.AuthAccountMapper">
+    <update id="updateAuthAccount">
+        update auth_account
+        <set>
+            <if test="account.username != null">
+                username = #{account.username},
+            </if>
+            <if test="account.password != null">
+                password = #{account.password},
+            </if>
+            <if test="account.status != null">
+                status = #{account.status}
+            </if>
+        </set>
+    </update>
+    <update id="updateByIdAndSystype">
+        update auth_account
+        <set>
+            <if test="account.tenantId != null">
+                tenentId = #{account.tenantId}
+            </if>
+        </set>
+        where sys_type = #{systype}
+        and user_id = #{userid}
+    </update>
+    <delete id="deleteByUserIdAndSysType">
+        delete
+        from auth_account
+        where sys_type = #{sysType}
+          and user_id = #{userid}
+    </delete>
 
     <select id="getVerifiedUserInfoByInputUserName"
             resultType="com.spring.what.security.bo.AuthAccountInVerifyBO">
@@ -13,5 +43,17 @@
         <if test="inputEnum == 2">
             and username = #{userName}
         </if>
+    </select>
+    <select id="getAuthAcccountByUserIdAndSysType" resultType="com.spring.what.auth.model.AuthAccount">
+        select uid, user_id, username, status, create_ip
+        from auth_account
+        where user_id = #{userid}
+          and sys_type = #{sysType}
+    </select>
+    <select id="getAuthAcccountByUserNameAndSysType" resultType="com.spring.what.api.auth.vo.AuthAccountVO">
+        select *
+        from auth_account
+        where username = #{username}
+          and sys_type = #{systype}
     </select>
 </mapper>
