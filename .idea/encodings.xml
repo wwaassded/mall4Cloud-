@@ -5,6 +5,8 @@
     <file url="file://$PROJECT_DIR$/sMall-api/api-auth/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sMall-api/api-leaf/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sMall-api/api-leaf/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sMall-api/api-rbac/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sMall-api/api-rbac/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sMall-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sMall-api/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sMall-auth/src/main/java" charset="UTF-8" />
@@ -21,6 +23,8 @@
     <file url="file://$PROJECT_DIR$/sMall-common/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sMall-leaf/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sMall-leaf/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sMall-rbac/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sMall-rbac/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
   </component>
