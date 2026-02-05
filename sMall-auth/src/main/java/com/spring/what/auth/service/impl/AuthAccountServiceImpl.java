@@ -1,6 +1,8 @@
 package com.spring.what.auth.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.spring.what.api.auth.bo.UserInfoInTokenBO;
 import com.spring.what.auth.constant.AuthAccountStatusEnum;
@@ -60,6 +62,22 @@ public class AuthAccountServiceImpl extends ServiceImpl<AuthAccountMapper, AuthA
             return ServerResponseEntity.showFail("用户已经被封禁请联系客服");
         }
         return ServerResponseEntity.success(BeanUtil.map(authAccountInVerifyBO, UserInfoInTokenBO.class));
+    }
+
+    @Override
+    public AuthAccount getUserInfoInTokenByIdAndSysType(Long userId, Integer sysType) {
+        LambdaQueryWrapper<AuthAccount> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(AuthAccount::getUserId, userId)
+                .eq(AuthAccount::getSysType, sysType);
+        return authAccountMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public void updatePassword(Long userId, Integer sysType, String encode) {
+        LambdaUpdateWrapper<AuthAccount> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(AuthAccount::getUserId, userId)
+                .eq(AuthAccount::getSysType, sysType)
+                .set(AuthAccount::getPassword, encode);
     }
 }
 

@@ -15,4 +15,8 @@ import jakarta.validation.constraints.NotNull;
 public interface AuthAccountService extends IService<AuthAccount> {
 
     ServerResponseEntity<UserInfoInTokenBO> getUserInfoInTokenByInputUserName(@NotBlank(message = "principal不能为空") String principal, @NotBlank(message = "credentials不能为空") String credentials, @NotNull(message = "sysType不能为空") Integer sysType);
+
+    AuthAccount getUserInfoInTokenByIdAndSysType(Long userId, Integer sysType);
+
+    void updatePassword(Long userId, Integer sysType, String encode);
 }

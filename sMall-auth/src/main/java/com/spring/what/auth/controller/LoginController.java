@@ -6,6 +6,7 @@ import com.spring.what.auth.dto.AuthenticationDTO;
 import com.spring.what.auth.manager.TokenStore;
 import com.spring.what.auth.service.AuthAccountService;
 import com.spring.what.common.response.ServerResponseEntity;
+import com.spring.what.security.AuthContext;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -37,7 +38,7 @@ public class LoginController {
         if (!userInfoInTokenBOServerResponseEntity.isSuccess()) {
             return ServerResponseEntity.transfer(userInfoInTokenBOServerResponseEntity);
         }
-        //FIXME 清楚掉用户就有的权限缓存
+        //FIXME 清除掉用户就有的权限缓存
         UserInfoInTokenBO userInfoInTokenBO = userInfoInTokenBOServerResponseEntity.getData();
         TokenInfoVO tokenInfoVO = tokenStore.storeAndGetVo(userInfoInTokenBO);
         return ServerResponseEntity.success(tokenInfoVO);
@@ -46,6 +47,9 @@ public class LoginController {
     @PostMapping("/login_out")
     @Operation(summary = "退出登陆", description = "点击退出登陆，清除token，清除菜单缓存")
     public ServerResponseEntity<TokenInfoVO> loginOut() {
-        return null;
+        UserInfoInTokenBO userInfoInTokenBO = AuthContext.get();
+        //FIXME 清除掉用户就有的权限缓存
+        tokenStore.deleteAllToken(userInfoInTokenBO.getSysType().toString(), userInfoInTokenBO.getUid());
+        return ServerResponseEntity.success();
     }
 }
