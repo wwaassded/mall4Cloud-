@@ -3,5 +3,53 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spring.what.rbac.mapper.MenuMapper">
+    <resultMap id="BaseResultMap" type="com.spring.what.rbac.model.Menu">
+        <!--@Table menu-->
+        <id column="menu_id" jdbcType="BIGINT" property="menuId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="biz_type" jdbcType="TINYINT" property="bizType"/>
+        <result column="permission" jdbcType="VARCHAR" property="permission"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="component" jdbcType="VARCHAR" property="component"/>
+        <result column="redirect" jdbcType="VARCHAR" property="redirect"/>
+        <result column="always_show" jdbcType="TINYINT" property="alwaysShow"/>
+        <result column="hidden" jdbcType="TINYINT" property="hidden"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+        <result column="no_cache" jdbcType="TINYINT" property="noCache"/>
+        <result column="breadcrumb" jdbcType="TINYINT" property="breadcrumb"/>
+        <result column="affix" jdbcType="TINYINT" property="affix"/>
+        <result column="active_menu" jdbcType="VARCHAR" property="activeMenu"/>
+        <result column="seq" jdbcType="VARCHAR" property="seq"/>
+    </resultMap>
+    <resultMap id="MenuSimpleVOMap" type="com.spring.what.rbac.vo.MenuSimpleVO">
+        <id column="menu_id" jdbcType="BIGINT" property="menuId"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <collection property="menuPermissions" ofType="com.spring.what.rbac.vo.MenuPermissionSimpleVO">
+            <id column="menu_permission_id" property="menuPermissionId"/>
+            <result column="permission_menu_id" property="menuId"/>
+            <result column="name" property="name"/>
+        </collection>
+    </resultMap>
 
+    <sql id="Vo_Column_List">
+        `menu_id`,`create_time`,`update_time`,`parent_id`,`biz_type`,`permission`,`path`,`component`,`redirect`,`always_show`,`hidden`,`name`,`title`,`icon`,`no_cache`,`breadcrumb`,`affix`,`active_menu`,`seq`
+    </sql>
+    <select id="listWithPermissions" resultType="com.spring.what.rbac.vo.MenuSimpleVO">
+        select m.menu_id, parent_id, title, mp.menu_permission_id, mp.name, mp.menu_id permission_menu_id
+        from menu as m
+                 left outer join menu_permission as mp
+                                 on m.menu_id = mp.menu_id
+        where m.biz_type = #{systype}
+    </select>
+    <select id="listMenuIds" resultType="java.lang.Long">
+        select rm.menu_id
+        from user_role ur
+                 left outer join role_menu rm
+                                 on user_id = #{userid} and ur.role_id = rm.role_id and rm.menu_id IS NOT NULL
+    </select>
 </mapper>

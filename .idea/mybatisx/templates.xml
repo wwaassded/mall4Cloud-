@@ -68,16 +68,8 @@
             <option name="tableUIInfoList">
               <list>
                 <TableUIInfo>
-                  <option name="className" value="MenuPermission" />
-                  <option name="tableName" value="menu_permission" />
-                </TableUIInfo>
-                <TableUIInfo>
-                  <option name="className" value="Menu" />
-                  <option name="tableName" value="menu" />
-                </TableUIInfo>
-                <TableUIInfo>
-                  <option name="className" value="Role" />
-                  <option name="tableName" value="role" />
+                  <option name="className" value="UserRole" />
+                  <option name="tableName" value="user_role" />
                 </TableUIInfo>
               </list>
             </option>
