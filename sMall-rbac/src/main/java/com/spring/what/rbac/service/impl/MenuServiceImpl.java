@@ -75,7 +75,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
     }
 
     @Override
-    @Cacheable(cacheNames = CacheNames.MENU_LIST_KEY, key = "#userId")
+    @Cacheable(cacheNames = CacheNames.MENU_ID_LIST_KEY, key = "#userId")
     public List<Long> listMenuIds(Long userId) {
         return menuMapper.listMenuIds(userId);
     }

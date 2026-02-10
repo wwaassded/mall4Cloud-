@@ -1,7 +1,10 @@
 package com.spring.what.rbac.mapper;
 
+import com.spring.what.api.rbac.bo.UriPermissionBO;
 import com.spring.what.rbac.model.MenuPermission;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.spring.what.rbac.vo.MenuPermissionAndMenuRoleSimpleVO;
+import com.spring.what.rbac.vo.MenuPermissionVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -14,6 +17,15 @@ import java.util.List;
  */
 public interface MenuPermissionMapper extends BaseMapper<MenuPermission> {
 
+    List<MenuPermissionVO> listByMenuId(@Param("menuid") Long menuId);
+
+    MenuPermissionVO getMenuPermissionId(@Param("menupermissionid") Long menuPermissionId);
+
+    List<String> selectPermissionFromMP(@Param("systype") Integer sysType);
+
+    List<String> selectAllFromMPAndMR(@Param("userid") Long userId,@Param("systype") Integer sysType);
+
+    List<UriPermissionBO> getAllUriPermissions(@Param("systype") Integer sysType);
 }
 
 

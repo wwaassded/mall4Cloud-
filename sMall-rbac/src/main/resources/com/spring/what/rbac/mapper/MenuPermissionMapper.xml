@@ -3,4 +3,49 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spring.what.rbac.mapper.MenuPermissionMapper">
+
+    <select id="listByMenuId" resultType="com.spring.what.rbac.vo.MenuPermissionVO">
+        select `menu_permission_id`,
+               `menu_id`,
+               `biz_type`,
+               `permission`,
+               `name`,
+               `uri`,
+               `method`
+        from menu_permission
+        where menu_id = #{menuid}
+    </select>
+
+    <select id="getMenuPermissionId" resultType="com.spring.what.rbac.vo.MenuPermissionVO">
+        select `menu_permission_id`,
+               `menu_id`,
+               `biz_type`,
+               `permission`,
+               `name`,
+               `uri`,
+               `method`
+        from menu_permission
+        where menu_permission_id = #{menupermissionid}
+    </select>
+
+    <select id="selectPermissionFromMP" resultType="java.lang.String">
+        select permission
+        from menu_permission
+        where biz_type = #{systype}
+    </select>
+    <select id="selectAllFromMPAndMR" resultType="java.lang.String">
+        select permission
+        from menu_permission mp
+                 inner join role_menu rm on mp.menu_permission_id = rm.menu_permission_id and biz_type = #{systype} and
+                                            role_id in (select ur.role_id
+                                                        from user_role ur
+                                                        where user_id = #{userid})
+    </select>
+    <select id="getAllUriPermissions" resultType="com.spring.what.api.rbac.bo.UriPermissionBO">
+        select permission, uri, method
+        from menu_permission
+        where biz_type = #{systype}
+    </select>
+
+
 </mapper>

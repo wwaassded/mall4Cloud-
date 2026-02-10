@@ -2,6 +2,8 @@ package com.spring.what.auth.controller;
 
 import com.spring.what.api.auth.bo.UserInfoInTokenBO;
 import com.spring.what.api.auth.vo.TokenInfoVO;
+import com.spring.what.api.rbac.dto.ClearUserPermissionsCacheDTO;
+import com.spring.what.api.rbac.feign.PermissionFeignClient;
 import com.spring.what.auth.dto.AuthenticationDTO;
 import com.spring.what.auth.manager.TokenStore;
 import com.spring.what.auth.service.AuthAccountService;
@@ -28,6 +30,9 @@ public class LoginController {
     @Resource
     private TokenStore tokenStore;
 
+    @Resource
+    private PermissionFeignClient permissionFeignClient;
+
     @PostMapping("/ua/login")
     @Operation(summary = "账号密码", description = "通过账号登录，还要携带用户的类型，也就是用户所在的系统")
     public ServerResponseEntity<TokenInfoVO> login(
@@ -38,8 +43,11 @@ public class LoginController {
         if (!userInfoInTokenBOServerResponseEntity.isSuccess()) {
             return ServerResponseEntity.transfer(userInfoInTokenBOServerResponseEntity);
         }
-        //FIXME 清除掉用户就有的权限缓存
         UserInfoInTokenBO userInfoInTokenBO = userInfoInTokenBOServerResponseEntity.getData();
+        ClearUserPermissionsCacheDTO clearUserPermissionsCacheDTO = new ClearUserPermissionsCacheDTO();
+        clearUserPermissionsCacheDTO.setUserId(userInfoInTokenBO.getUserId());
+        clearUserPermissionsCacheDTO.setSysType(userInfoInTokenBO.getSysType());
+        permissionFeignClient.clearUserPermissionsCache(clearUserPermissionsCacheDTO);
         TokenInfoVO tokenInfoVO = tokenStore.storeAndGetVo(userInfoInTokenBO);
         return ServerResponseEntity.success(tokenInfoVO);
     }
@@ -48,7 +56,10 @@ public class LoginController {
     @Operation(summary = "退出登陆", description = "点击退出登陆，清除token，清除菜单缓存")
     public ServerResponseEntity<TokenInfoVO> loginOut() {
         UserInfoInTokenBO userInfoInTokenBO = AuthContext.get();
-        //FIXME 清除掉用户就有的权限缓存
+        ClearUserPermissionsCacheDTO clearUserPermissionsCacheDTO = new ClearUserPermissionsCacheDTO();
+        clearUserPermissionsCacheDTO.setUserId(userInfoInTokenBO.getUserId());
+        clearUserPermissionsCacheDTO.setSysType(userInfoInTokenBO.getSysType());
+        permissionFeignClient.clearUserPermissionsCache(clearUserPermissionsCacheDTO);
         tokenStore.deleteAllToken(userInfoInTokenBO.getSysType().toString(), userInfoInTokenBO.getUid());
         return ServerResponseEntity.success();
     }
