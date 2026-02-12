@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.what.biz.mapper.AttachFileGroupMapper">
+
+    <resultMap id="BaseResultMap" type="com.spring.what.biz.model.AttachFileGroup">
+            <id property="attachFileGroupId" column="attach_file_group_id" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="shopId" column="shop_id" />
+            <result property="name" column="name" />
+            <result property="type" column="type" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        attach_file_group_id,create_time,update_time,shop_id,name,type
+    </sql>
+</mapper>

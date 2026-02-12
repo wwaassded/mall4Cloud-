@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.what.biz.mapper.AttachFileMapper">
+
+    <resultMap id="BaseResultMap" type="com.spring.what.biz.model.AttachFile">
+        <id property="fileId" column="file_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="filePath" column="file_path"/>
+        <result property="fileType" column="file_type"/>
+        <result property="fileName" column="file_name"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="type" column="type"/>
+        <result property="attachFileGroupId" column="attach_file_group_id"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        file_id,create_time,update_time,file_path,file_type,file_name,
+        file_size,shop_id,type,attach_file_group_id
+    </sql>
+    <select id="pageForAttachFileVO" resultType="com.spring.what.biz.vo.AttachFileVO">
+        select
+        <include refid="Base_Column_List"/>
+        from attach_file
+        where shop_id = #{tenantid} and type = 1
+        <if test="filename != null and filename != ''">
+            and file_name like CONCAT('%',#{filename},'%')
+        </if>
+        <if test="filegroup != null">
+            and attach_file_group_id = #{filegroup}
+        </if>
+        order by update_time desc, file_id desc
+    </select>
+</mapper>
