@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.what.user.mapper.UserAddrMapper">
+
+    <resultMap id="BaseResultMap" type="com.spring.what.user.model.UserAddr">
+        <id property="addrId" column="addr_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="userId" column="user_id"/>
+        <result property="mobile" column="mobile"/>
+        <result property="isDefault" column="is_default"/>
+        <result property="consignee" column="consignee"/>
+        <result property="provinceId" column="province_id"/>
+        <result property="province" column="province"/>
+        <result property="cityId" column="city_id"/>
+        <result property="city" column="city"/>
+        <result property="areaId" column="area_id"/>
+        <result property="area" column="area"/>
+        <result property="postCode" column="post_code"/>
+        <result property="addr" column="addr"/>
+        <result property="lng" column="lng"/>
+        <result property="lat" column="lat"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        addr_id,create_time,update_time,user_id,mobile,is_default,
+        consignee,province_id,province,city_id,city,
+        area_id,area,post_code,addr,lng,
+        lat
+    </sql>
+    <select id="listUserAddrVO" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_addr
+        where user_id = #{userid}
+        order by addr_id desc
+    </select>
+    <select id="getUserAddrVO" resultType="com.spring.what.common.order.vo.UserAddrVO">
+        select
+        <include refid="Base_Column_List"/>
+        from user_addr
+        where user_id = #{userid}
+        and addr_id = #{addrid}
+    </select>
+    <select id="getDefaultAddrVO" resultType="com.spring.what.common.order.vo.UserAddrVO">
+        select
+        <include refid="Base_Column_List"/>
+        from user_addr
+        where user_id = #{userid} and is_default = 1
+    </select>
+</mapper>

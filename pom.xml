@@ -17,6 +17,7 @@
         <module>sMall-rbac</module>
         <module>sMall-gateWay</module>
         <module>sMall-biz</module>
+        <module>sMall-user</module>
     </modules>
 
     <properties>

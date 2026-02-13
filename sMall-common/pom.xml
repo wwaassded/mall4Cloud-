@@ -16,6 +16,7 @@
         <module>common-database</module>
         <module>common-cache</module>
         <module>common-rocketmq</module>
+        <module>common-order</module>
     </modules>
 
     <properties>
