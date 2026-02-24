@@ -18,6 +18,7 @@
         <module>sMall-gateWay</module>
         <module>sMall-biz</module>
         <module>sMall-user</module>
+        <module>sMall-platform</module>
     </modules>
 
     <properties>

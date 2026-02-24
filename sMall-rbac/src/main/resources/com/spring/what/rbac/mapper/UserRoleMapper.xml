@@ -5,14 +5,26 @@
 <mapper namespace="com.spring.what.rbac.mapper.UserRoleMapper">
 
     <resultMap id="BaseResultMap" type="com.spring.what.rbac.model.UserRole">
-            <id property="id" column="id" />
-            <result property="createTime" column="create_time" />
-            <result property="updateTime" column="update_time" />
-            <result property="userId" column="user_id" />
-            <result property="roleId" column="role_id" />
+        <id property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="userId" column="user_id"/>
+        <result property="roleId" column="role_id"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,create_time,update_time,user_id,role_id
     </sql>
+    <insert id="saveByUserIdAndSysType">
+        insert into user_role (user_id, role_id)
+        VALUES
+        <foreach collection="roleIdList" item="roleId" separator=",">
+            (#{userid}, #{roleId})
+        </foreach>
+    </insert>
+    <select id="getRoleIds" resultType="java.lang.Long">
+        select role_id
+        from user_role
+        where user_id = #{userid}
+    </select>
 </mapper>
