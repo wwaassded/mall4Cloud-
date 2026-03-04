@@ -19,6 +19,9 @@
         <module>sMall-biz</module>
         <module>sMall-user</module>
         <module>sMall-platform</module>
+        <module>sMall-multishop</module>
+        <module>sMall-product</module>
+        <module>sMall-search</module>
     </modules>
 
     <properties>

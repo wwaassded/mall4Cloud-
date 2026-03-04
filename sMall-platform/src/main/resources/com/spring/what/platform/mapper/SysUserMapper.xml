@@ -5,18 +5,19 @@
 <mapper namespace="com.spring.what.platform.mapper.SysUserMapper">
 
     <resultMap id="BaseResultMap" type="com.spring.what.platform.model.SysUser">
-            <id property="sysUserId" column="sys_user_id" />
-            <result property="createTime" column="create_time" />
-            <result property="updateTime" column="update_time" />
-            <result property="nickName" column="nick_name" />
-            <result property="avatar" column="avatar" />
-            <result property="code" column="code" />
-            <result property="phoneNum" column="phone_num" />
-            <result property="hasAccount" column="has_account" />
+        <id property="sysUserId" column="sys_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="avatar" column="avatar"/>
+        <result property="code" column="code"/>
+        <result property="phoneNum" column="phone_num"/>
+        <result property="hasAccount" column="has_account"/>
     </resultMap>
 
-    <sql id="Base_Column_List">
-        sys_user_id,create_time,update_time,nick_name,avatar,code,
-        phone_num,has_account
-    </sql>
+    <select id="getVOById" resultType="com.spring.what.platform.vo.SysUserVO">
+        select sys_user_id, nick_name, avatar, `code`, phone_num, has_account
+        from sys_user
+        where sys_user_id = #{userid}
+    </select>
 </mapper>

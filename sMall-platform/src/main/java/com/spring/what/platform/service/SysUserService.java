@@ -8,6 +8,7 @@ import com.spring.what.platform.model.SysUser;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.spring.what.platform.vo.SysUserSimpleVO;
 import com.spring.what.platform.vo.SysUserVO;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
@@ -25,4 +26,6 @@ public interface SysUserService extends IService<SysUser> {
     void updateDTO(SysUser sysUser, List<Long> roleIds);
 
     void deleteDTO(Long sysUserId);
+
+    SysUserVO getVOById(@NotNull(message = "userId not null") Long userId);
 }

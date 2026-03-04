@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.what.multishop.mapper.ShopDetailMapper">
+
+    <resultMap id="BaseResultMap" type="com.spring.what.multishop.model.ShopDetail">
+        <id property="shopId" column="shop_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="shopName" column="shop_name"/>
+        <result property="intro" column="intro"/>
+        <result property="shopLogo" column="shop_logo"/>
+        <result property="mobileBackgroundPic" column="mobile_background_pic"/>
+        <result property="shopStatus" column="shop_status"/>
+        <result property="businessLicense" column="business_license"/>
+        <result property="identityCardFront" column="identity_card_front"/>
+        <result property="identityCardLater" column="identity_card_later"/>
+        <result property="type" column="type"/>
+    </resultMap>
+    <select id="countShopNumber" resultType="java.lang.Integer">
+        select count(*)
+        from shop_detail
+        where shop_name = #{shopname} and shop_status != -1
+        <if test="shopid != null">
+            and shop_id = #{shopid}
+        </if>
+    </select>
+    <select id="getByShopId" resultType="com.spring.what.api.multishop.vo.ShopDetailVO">
+        select shop_id,
+               shop_name,
+               intro,
+               shop_logo,
+               mobile_background_pic,
+               shop_status,
+               business_license,
+               identity_card_front,
+               identity_card_later,
+               `type`
+        from shop_detail
+        where shop_id = #{shopid}
+    </select>
+</mapper>

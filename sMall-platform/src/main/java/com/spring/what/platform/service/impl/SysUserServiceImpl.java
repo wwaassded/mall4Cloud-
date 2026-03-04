@@ -1,14 +1,13 @@
 package com.spring.what.platform.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.spring.what.api.auth.bo.UserInfoInTokenBO;
 import com.spring.what.api.auth.feign.AccountFeignClient;
 import com.spring.what.api.rbac.dto.UserRoleDTO;
 import com.spring.what.api.rbac.feign.UserRoleFeignClient;
 import com.spring.what.cache.constant.CacheNames;
+import com.spring.what.common.response.ServerResponseEntity;
 import com.spring.what.platform.model.SysUser;
 import com.spring.what.platform.service.SysUserService;
 import com.spring.what.platform.mapper.SysUserMapper;
@@ -16,7 +15,6 @@ import com.spring.what.platform.vo.SysUserSimpleVO;
 import com.spring.what.platform.vo.SysUserVO;
 import io.seata.spring.annotation.GlobalTransactional;
 import jakarta.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -26,8 +24,8 @@ import java.util.List;
 
 /**
  * @author whatyi
- * @description 针对表【sys_user(平台用户)】的数据库操作Service实现
- * @createDate 2026-02-21 18:56:26
+ * &#064;description  针对表【sys_user(平台用户)】的数据库操作Service实现
+ * &#064;createDate  2026-02-21 18:56:26
  */
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
@@ -38,7 +36,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
 
     @Resource
     private UserRoleFeignClient userRoleFeignClient;
-    @Autowired
+
+    @Resource
     private AccountFeignClient accountFeignClient;
 
     @Override
@@ -87,6 +86,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
         sysUserMapper.deleteById(sysUserId);
         userRoleFeignClient.deleteByUserIdAndSysType(sysUserId);
         accountFeignClient.deleteByUserIdAndSysType(sysUserId);
+    }
+
+    @Override
+    public SysUserVO getVOById(Long userId) {
+        SysUserVO sysUserVO = sysUserMapper.getVOById(userId);
+        ServerResponseEntity<List<Long>> roleIds = userRoleFeignClient.getRoleIds(userId);
+        sysUserVO.setRoleIds(roleIds.getData());
+        return sysUserVO;
     }
 }
 

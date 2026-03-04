@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.spring.what.platform.model.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.spring.what.platform.vo.SysUserVO;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * @author whatyi
@@ -14,6 +15,7 @@ import com.spring.what.platform.vo.SysUserVO;
  */
 public interface SysUserMapper extends BaseMapper<SysUser> {
 
+    SysUserVO getVOById(@Param("userid") Long userId);
 }
 
 

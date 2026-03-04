@@ -1,6 +1,6 @@
 package com.spring.what.platform.vo;
 
-import com.mall4j.cloud.common.vo.BaseVO;
+import com.spring.what.common.vo.BaseVO;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**

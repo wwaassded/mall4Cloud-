@@ -16,6 +16,10 @@
         <module>api-auth</module>
         <module>api-rbac</module>
         <module>api-user</module>
+        <module>api-platform</module>
+        <module>api-product</module>
+        <module>api-multishop</module>
+        <module>api-search</module>
     </modules>
 
     <properties>
