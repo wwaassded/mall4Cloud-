@@ -20,6 +20,7 @@
         <module>api-product</module>
         <module>api-multishop</module>
         <module>api-search</module>
+        <module>api-order</module>
     </modules>
 
     <properties>
