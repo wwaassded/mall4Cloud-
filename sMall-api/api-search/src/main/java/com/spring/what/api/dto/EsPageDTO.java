@@ -4,6 +4,8 @@ package com.spring.what.api.dto;
 import com.spring.what.common.util.PrincipalUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Arrays;
 
@@ -11,7 +13,8 @@ import java.util.Arrays;
  * @author FrozenWatermelon
  * @date 2020/11/16
  */
-public class EsPageDTO{
+@Getter
+public class EsPageDTO {
 
     public static final String ASC = "ASC";
 
@@ -25,31 +28,20 @@ public class EsPageDTO{
     /**
      * 当前页
      */
+    @Setter
     @NotNull(message = "pageNum 不能为空")
-    @Schema(description = "当前页" , requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "当前页", requiredMode = Schema.RequiredMode.REQUIRED)
     private Integer pageNum;
 
     @NotNull(message = "pageSize 不能为空")
-    @Schema(description = "每页大小" , requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "每页大小", requiredMode = Schema.RequiredMode.REQUIRED)
     private Integer pageSize;
 
-    @Schema(description = "排序字段数组，用逗号分割" )
+    @Schema(description = "排序字段数组，用逗号分割")
     private String[] columns;
 
-    @Schema(description = "排序字段方式，用逗号分割，ASC正序，DESC倒序" )
+    @Schema(description = "排序字段方式，用逗号分割，ASC正序，DESC倒序")
     private String[] orders;
-
-    public Integer getPageNum() {
-        return pageNum;
-    }
-
-    public void setPageNum(Integer pageNum) {
-        this.pageNum = pageNum;
-    }
-
-    public Integer getPageSize() {
-        return pageSize;
-    }
 
     public void setPageSize(Integer pageSize) {
         if (pageSize > MAX_PAGE_SIZE) {
@@ -61,22 +53,6 @@ public class EsPageDTO{
 
     public String getOrderBy() {
         return order(this.columns, this.orders);
-    }
-
-    public String[] getColumns() {
-        return columns;
-    }
-
-    public void setColumns(String[] columns) {
-        this.columns = columns;
-    }
-
-    public String[] getOrders() {
-        return orders;
-    }
-
-    public void setOrders(String[] orders) {
-        this.orders = orders;
     }
 
     public static String order(String[] columns, String[] orders) {
@@ -97,7 +73,7 @@ public class EsPageDTO{
                 if (!(order.equals(ASC) || order.equals(DESC))) {
                     throw new IllegalArgumentException("非法的排序策略：" + column);
                 }
-            }else {
+            } else {
                 order = ASC;
             }
 
@@ -129,7 +105,6 @@ public class EsPageDTO{
         }
         return stringBuilder.toString();
     }
-
 
 
     @Override
